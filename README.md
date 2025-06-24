@@ -1,26 +1,4 @@
-# =============================================================
-# nlp-tfgpu 환경용: requirements_nlp.txt 파일에 저장
-# =============================================================
-pandas
-requests
-beautifulsoup4
-selenium
-webdriver-manager
-tensorflow
-scikit-learn
-konlpy
-streamlit
-matplotlib
-wordcloud
-# main.py에서 병렬 처리 및 스케줄링을 위해 사용
-multiprocessing 
-apscheduler
 
-# =============================================================
-# LangchainEnv 환경용: requirements_langchain.txt 파일에 저장
-# =============================================================
-langchain-openai
-pandas
 ```
 **터미널에서 직접 생성하는 방법:**
 1.  `conda activate nlp-tfgpu` 실행 후 `pip freeze > requirements_nlp.txt`

@@ -1,0 +1,13 @@
+pandas
+requests
+beautifulsoup4
+selenium
+webdriver-manager
+tensorflow
+scikit-learn
+konlpy
+streamlit
+matplotlib
+wordcloud
+multiprocessing 
+apscheduler

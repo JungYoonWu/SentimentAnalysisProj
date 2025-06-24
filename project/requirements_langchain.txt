@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 langchain-openai
+=======
+langchain-openai
+>>>>>>> b3da3c76ca1d23ec57bb87cb595e7a0c8a6284bc
 pandas

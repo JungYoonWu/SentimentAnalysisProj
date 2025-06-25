@@ -1,17 +1,3 @@
-
-
-### **1 터미널에서 직접 생성하는 방법:**
-```
-1.  `conda activate nlp-tfgpu` 실행 후 `pip freeze > requirements_nlp.txt`
-2.  `conda activate LangchainEnv` 실행 후 `pip freeze > requirements_langchain.txt`
-```
----
-
-### **2. `README.md` (프로젝트 설명서)**
-
-GitHub 리포지토리의 메인 페이지에 표시될 설명서입니다. 아래 내용을 `README.md` 파일로 저장하세요.
-
-
 # MapleStory Community Sentiment Analysis MLOps Pipeline
 
 ## 1. 📖 프로젝트 개요

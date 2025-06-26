@@ -146,7 +146,36 @@ project
       Embedding -> Dropout -> Bi-LSTM(return_seq) -> Dropout -> Bi-LSTM -> Dense -> Dropout -> Output
       ```
 
+2.  **평가지표**:
+<table>
+  <thead>
+    <tr>
+      <th>평가항목</th>
+      <th>결과</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Model Summary</strong></td>
+      <td><img src="./assets/model_summary.png" alt="Model Summary" width="600" height="300"></td>
+    </tr>
+    <tr>
+      <td><strong>Training_History</strong></td>
+      <td><img src="./assets/training_history.png" alt="Training_History" width="600" height="300"></td>
+    </tr>
+    <tr>
+      <td><strong>Classification Report</strong></td>
+      <td><img src="./assets/Classification Report.png" alt="Classification Report" width="600" height="300"></td>
+    </tr>
+    <tr>
+      <td><strong>Confusion_Matrix</strong></td>
+      <td><img src="./assets/confusion_matrix.png" alt="Confusion_Matrix" width="600" height="300"></td>
+    </tr>
+  </tbody>
+</table>
+
 ---
+
 
 ## 7. 🚀 실행 방법
 
@@ -232,6 +261,10 @@ project
 * **데이터 불균형 문제**: 상대적으로 '중립'적인 감성의 데이터가 '긍정'이나 '부정'에 비해 많게 측정이 되었는데 실제로 보면 위에 언급한 이유로 긍정 혹은 부정적인 내용이 중립으로 표시되는 경우가 많았습니다.
  그 결과 모델이 중립적인 문장을 판단하는 데 어려움을 겪는 경향이 나타났습니다.
 
+* **자동라벨링된 데이터의 한계**: 현재 파이프라인은 LLM이 생성한 라벨을 별도의 신뢰도 검증 없이 모두 학습 데이터로 사용합니다. 이로 인해, 분류 확률이 특정 임계값 미만인 모호한 데이터
+  (예: 긍정 35%, 중립 32%, 부정 33%)까지 학습에 포함되어 데이터 노이즈(noise)가 증가했고, 이는 모델의 초기 성능을 저해하는 주요 원인으로 작용했습니다. 학습 데이터의 품질을 확보하기 위한
+  데이터 정제(Data Curation) 및 검증 단계의 부재가 한계점으로 남습니다. 
+
 * **로컬 환경의 리소스 한계**: 모든 파이프라인을 로컬 PC에서 실행하여, 특히 LLM 라벨링과 모델 학습 단계에서 상당한 시간과 컴퓨팅 자원이 소요되었습니다.
 
 ---
@@ -240,8 +273,17 @@ project
 
 본 프로젝트는 다음과 같은 방향으로 더욱 발전될 수 있습니다.
 
-1.  **고성능 모델 도입**: `Ko-BERT`, `Ko-ELECTRA` 등 한국어에 더 특화된 대규모 언어 모델을 Fine-tuning하여 모델의 근본적인 성능을 향상시킬 수 있습니다.
+1.  **데이터 중심 AI(Data-Centric AI) 접근법 도입**:
+    * **신뢰도 기반 데이터 정제 (Confidence-based Filtering)**: LLM이 라벨링한 데이터 중, 분류 확률이 특정 임계값 미만인 모호한 데이터(예: 긍정 35%, 중립 33%, 부정 32%)는 학습에서 제외하거나 별도의 검수 대상으로 분리하여
+      데이터셋의 전체적인 품질(Quality)을 향상시킵니다.
+    * **능동 학습(Active Learning) 루프 구현**: 모델이 가장 헷갈려 하는 데이터를 선별하여 우선적으로 사용자 피드백(Human-in-the-Loop)을 요청함으로써, 최소한의 비용으로 모델 성능을 극대화하는 학습 전략을 도입합니다.
 
-2.  **클라우드 기반 파이프라인 확장**: `AWS`, `GCP` 등 클라우드 플랫폼과 `Airflow`, `Kubeflow Pipelines` 같은 전문 오케스트레이션 도구를 도입하여, 전체 MLOps 파이프라인을 더 안정적이고 확장성 있게 운영할 수 있습니다.
+2.  **고성능 사전 학습 모델(PLM) 기반 전이 학습(Transfer Learning)**:
+    * 현재의 Bi-LSTM 모델을 `Ko-BERT`, `Ko-ELECTRA` 등 한국어에 사전 학습된 대규모 언어 모델로 교체하고, 본 프로젝트에서 수집한 도메인 특화 데이터로 미세 조정(Fine-tuning)하여 모델의 근본적인 자연어 이해(NLU) 성능을 향상시킵니다.
 
-3.  **고급 분석 기능 추가**: 단순 긍/부정 분류를 넘어, 특정 키워드(예: "신규 보스", "확률")에 대한 감성 추이를 시계열로 분석하거나, 감성의 '이유'가 되는 핵심 문장을 추출하는 등 더 심층적인 분석 기능을 추가할 수 있습니다.
+3.  **클라우드 기반 파이프라인 확장 및 자동화 고도화**:
+    * `AWS`, `GCP` 등 클라우드 플랫폼으로 파이프라인을 이전하여 로컬 리소스 한계를 극복하고, `Airflow`, `Kubeflow Pipelines` 같은 전문 워크플로우 오케스트레이션 도구를 도입하여 전체 MLOps 파이프라인의 안정성, 확장성, 모니터링
+      기능을 강화합니다.
+
+4.  **심층 분석 기능 추가 및 서비스 확장**:
+    * 단순 긍/부정 분류를 넘어, **주제 모델링(Topic Modeling)을** 통해 주요 불만/칭찬 요인을 도출하거나, 특정 키워드(예: "신규 보스", "이벤트")에 대한 감성 추이를 시계열로 분석하는 등 더 심층적인 분석 기능을 추가합니다.

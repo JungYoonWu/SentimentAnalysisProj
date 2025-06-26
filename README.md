@@ -1,14 +1,17 @@
-# MapleStory Community Sentiment Analysis MLOps Pipeline
+# 게임 커뮤니티 특화 감성 분석 모델 구축 및 자동화 파이프라인
+**부제: LLM과 Human-in-the-Loop를 통한 MLOps 기반 모델 지속 성장 시스템**
 
 ## 1. 📖 프로젝트 개요
 
-본 프로젝트는 메이플스토리 인벤 커뮤니티의 게시글을 기반으로, 게임 유저들의 여론 동향을 분석하는 자동화된 MLOps 파이프라인을 구축하는 것을 목표로 합니다.
+본 프로젝트는 일반적인 데이터로 학습된 감성 분석 모델이 특정 도메인(게임 커뮤니티)의 은어와 뉘앙스를 정확히 파악하지 못하는 문제를 해결하기 위해 시작되었습니다. **범용(General-Domain) 모델을 특정 목적(Domain-Specific)에 맞게 지속적으로 똑똑하게 만드는 시스템**을 구축하는 것을 목표로 합니다.
 
-단순히 모델을 한 번 학습시키는 것을 넘어, **데이터 수집, LLM을 이용한 자동 라벨링, 모델 재학습, 버전 관리, 그리고 사용자 피드백을 통한 모델 성능 개선**까지 이어지는 전체 머신러닝 생명주기를 자동화하여 지속적으로 똑똑해지는 감성 분석 시스템을 구현합니다.
+이를 위해 메이플스토리 커뮤니티 데이터를 기반으로 **특화된 감성 분석 모델(Domain-Specific Sentiment Analysis Model)을** 구축하고, 나아가 **MLOps(Machine Learning Operations)** 파이프라인을 설계하여 데이터 수집, 자동 라벨링, 재학습, 배포, 그리고 사용자 피드백 반영까지 이어지는 전체 생명주기를 자동화했습니다.
+
+이 아키텍처는 메이플스토리뿐만 아니라 다른 게임 커뮤니티로도 쉽게 확장 가능하며, 지속적으로 살아 움직이는 머신러닝 시스템을 구축하는 경험을 쌓는 데 중점을 두었습니다.
 
 ---
 
-## 2. 🌟 주요 기능
+## 2. 🌟 시스템 주요 기능
 
 * **병렬 처리 파이프라인**: 데이터 수집 프로세스와 데이터 처리/학습 프로세스를 분리하여 24시간 멈추지 않고 동작합니다.
 * **LLM 기반 자동 라벨링**: 로컬에서 실행되는 Gemma 모델(LM Studio)을 활용하여 수집된 데이터에 '긍정/중립/부정' 라벨을 자동으로 부여합니다.
@@ -19,9 +22,20 @@
 
 ---
 
-## 3. ⚙️ MLOps 아키텍처
+## 3. 🛠️ 기술 스택 및 핵심 역량 (Tech Stack & Skills)
 
-본 파이프라인은 두 개의 독립적인 프로세스가 동시에 실행되는 병렬 구조로 설계되었습니다.
+| 구분 | 기술 스택 및 역량 |
+| :--- | :--- |
+| **Backend & ML** | `Python`, `TensorFlow`, `Keras`, `Scikit-learn`, `Konlpy` |
+| **LLM & Prompting** | `Langchain`, `LM Studio`, `Gemma`, `Prompt Engineering` |
+| **MLOps & Automation**| `Multiprocessing`, `APScheduler`, `Git`, `Git LFS` |
+| **Frontend & VIz** | `Streamlit`, `Pandas`, `Matplotlib`, `WordCloud` |
+| **핵심 경험 역량** | **MLOps 파이프라인 설계 및 구축**, **병렬 처리 아키텍처 구현**, **Human-in-the-Loop(HITL) 기반 모델 개선 사이클** 설계, **점진적 학습(Incremental Learning)** 및 **전이 학습(Transfer Learning)** 개념 적용, **모델 버전 관리** 및 배포 전략 수립 |
+
+---
+
+## 4. ⚙️ MLOps 아키텍처
+**데이터 수집기(Crawler)** 와 **파이프라인 Orchestrator**이 독립적으로 동작하는 **비동기 병렬 처리 구조**로 설계되었습니다.
 
 ```mermaid
 graph TD
@@ -68,7 +82,41 @@ graph TD
 
 ---
 
-## 4. 🗃️ 데이터 구조
+## 5. 🗃️ 데이터 구조
+**디렉토리구조**
+```bash
+project
+├── data
+│   ├── raw_chunks
+│   │   ├── raw_data_01.csv
+│   │   └── raw_data_02.csv
+│   ├── labeled_chunks
+│   │   ├── labeled_data_01.csv
+│   │   └── labeled_data_02.csv
+│   ├── archived_feedback
+│   ├── all_posts.csv
+│   ├── korean_stopwords.txt
+│   ├── merged_label_final.csv
+│   ├── pipeline_state.json
+│   └── user_feedback.csv
+├── lib
+│   └── crawler_noCmt.py
+├── new_model
+│   ├── best_maple_model.h5
+│   └── tokenizer.pkl
+├── production_models
+│   └── v_initial_model
+│   │   ├── model.h5
+│   │   └── tokenizer.pkl
+├── app.py
+├── crawer_main.py
+├── inference_app.py
+├── labeler_main.py
+├── myLangchainService.py
+├── training_pipeline.py
+└── main.py
+
+```
 
 | 파일/폴더명 | 설명 | 생성 주체 | 사용 주체 |
 | :--- | :--- | :--- | :--- |
@@ -82,7 +130,7 @@ graph TD
 
 ---
 
-## 5. 🧠 모델 학습 방식
+## 6. 🧠 모델 학습 방식
 
 모델의 성능을 지속적으로 향상시키기 위해 다음과 같은 학습 전략을 사용합니다.
 
@@ -100,9 +148,9 @@ graph TD
 
 ---
 
-## 6. 🚀 실행 방법
+## 7. 🚀 실행 방법
 
-### 6.1. 환경 설정
+### 7.1. 환경 설정
 
 1.  Anaconda 가상환경 2개를 생성합니다.
     ```bash
@@ -121,7 +169,7 @@ graph TD
     ```
 3.  Konlpy(Okt) 사용을 위해 JDK 설치가 필요할 수 있습니다.
 
-### 6.2. 초기 모델 학습 (최초 1회)
+### 7.2. 초기 모델 학습 (최초 1회)
 
 1.  `data` 폴더에 `merged_label_final.csv` 와 `korean_stopwords.txt` 파일을 위치시킵니다.
 2.  `training_pipeline.py`를 직접 실행하여 초기 베이스 모델을 생성합니다.
@@ -132,7 +180,7 @@ graph TD
     ```
     * 실행이 완료되면 `production_models/` 폴더에 첫 버전의 모델이 생성됩니다.
 
-### 6.3. 파이프라인 실행
+### 7.3. 파이프라인 실행
 
 1.  LM Studio를 실행하고, 감성 분석에 사용할 모델(예: `google/gemma-2-9b-it`)을 로컬 서버로 실행합니다.
 2.  **터미널 1**에서 MLOps 파이프라인을 시작합니다.
